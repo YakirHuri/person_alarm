@@ -3,6 +3,7 @@ import zipfile
 import argparse
 import sys
 import time
+import os
 import cv2
 from object_detector import ObjectDetector
 from object_detector import ObjectDetectorOptions
@@ -16,7 +17,7 @@ class ObjectDetection:
         self.score_threshold = 0.6
         self.max_results = 10
 
-        path_to_model = "/home/liran/person_alarm_ws/model/efficientdet_lite0.tflite"
+        path_to_model = "model/efficientdet_lite0.tflite"
 
         try:
             with zipfile.ZipFile(path_to_model) as model_with_metadata:
@@ -43,16 +44,30 @@ class ObjectDetection:
         results = self.detector.detect(image)
         return results
 
-def main():
+def remove_old_alarm(file_path):
+    try:
+        os.remove(file_path)
+        print(f"{file_path} has been removed successfully.")
+    except FileNotFoundError:
+        print(f"{file_path} does not exist.")
+    except PermissionError:
+        print(f"Permission denied to delete {file_path}.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def main():    
     
+    remove_old_alarm('person.jpeg')
+    time.sleep(1)
+
     # Initialize Object Detection
     obj_det = ObjectDetection()
 
     # Load the image
-    image = cv2.imread('/home/liran/person_alarm_ws/src/person.jpeg',1)
+    image = cv2.imread('alarm.jpeg',1)
     if image is None:
         print("ERROR: Unable to load image.")
-        sys.exit(1)
+        sys.exit(0)
 
     # Perform object detection
     results = obj_det.detect_objects(image)
@@ -79,8 +94,12 @@ def main():
                         (0, 255, 0), 
                         2)
 
-    cv2.imwrite('/home/liran/person_alarm_ws/src/result.png',image)
-    
+            cv2.imwrite('person.jpeg',image)
+            time.sleep(1)
+
+    print('finished')
+    exit(0)
 
 if __name__ == '__main__':
+
     main()
