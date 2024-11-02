@@ -14,7 +14,7 @@ class ObjectDetection:
 
     def __init__(self):    
         self.num_threads = 4
-        self.score_threshold = 0.6
+        self.score_threshold = 0.5
         self.max_results = 10
 
         path_to_model = "model/efficientdet_lite0.tflite"
@@ -57,14 +57,13 @@ def remove_old_alarm(file_path):
 
 def main():    
     
-    remove_old_alarm('person.jpeg')
-    time.sleep(1)
+    remove_old_alarm('/home/liran/person_alarm/docker_tf_lite/person.jpeg')
 
     # Initialize Object Detection
     obj_det = ObjectDetection()
 
     # Load the image
-    image = cv2.imread('alarm.jpeg',1)
+    image = cv2.imread('/home/liran/person_alarm/docker_tf_lite/alarm.jpeg',1)
     if image is None:
         print("ERROR: Unable to load image.")
         sys.exit(0)
@@ -77,8 +76,8 @@ def main():
     for result in results:
         print(f"{result}")
         # Check if the category is 'person' and if the score is above the threshold
-        if any(category.label == 'Person' and category.score >= obj_det.score_threshold for category in result.categories):
-            print("yes")
+        if any(category.label == 'Person' for category in result.categories):
+            print("person detected !!! ")
             # Draw the bounding box on the image
             cv2.rectangle(image, 
                           (result.bounding_box.left, result.bounding_box.top), 
@@ -93,11 +92,9 @@ def main():
                         0.5, 
                         (0, 255, 0), 
                         2)
+            print('wrting the image of the person ..')
+            cv2.imwrite('/home/liran/person_alarm/docker_tf_lite/person.jpeg',image)
 
-            cv2.imwrite('person.jpeg',image)
-            time.sleep(1)
-
-    print('finished')
     exit(0)
 
 if __name__ == '__main__':
