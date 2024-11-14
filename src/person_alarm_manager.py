@@ -9,15 +9,27 @@ import os
 import time
 import cv2 as cv #sudo apt install python3-opencv
 
-def rotate_to_target(start_angle, end_angle):
+def rotate_to_target(start_angle_x, end_angle_x, start_angle_y, end_angle_y):
 
-    # Call the Bash script with the numbers as arguments
+    # of the x 
     result = subprocess.run(
-        ['bash', 'motor/run.sh', str(start_angle), str(end_angle)],  # Pass the numbers as strings
+        ['bash', 'motor/run.sh', str(start_angle_x), str(end_angle_x),  str(11)],  # Pass the numbers as strings
         check=True,
         capture_output=True,
         text=True
     )
+    time.sleep(2)
+    # # for y
+    result = subprocess.run(
+        ['bash', 'motor/run.sh', str(start_angle_y), str(end_angle_y), str(13)],  # Pass the numbers as strings
+        check=True,
+        capture_output=True,
+        text=True
+    )
+
+
+# this is the center command !!!
+rotate_to_target(0, 180, 0, 125 ) 
 
 # need to run from the /person_alarm_project/
 def execute_person_detection():
@@ -34,10 +46,14 @@ def execute_person_detection():
 # Define the callback for when a message is received
 def on_message(client, userdata, msg):
     
-    print(f"Received message: {msg.payload.decode()}")    
+    print(f"Received message: {msg.payload.decode()}")  
 
+    msg =   msg.payload.decode()
+    if msg  == "left": 
+        rotate_to_target(180, 270, 115, 140 ) #left
+    elif msg == 'right':
+        rotate_to_target(180, 0, 115, 140  ) # right  
     print('rotate to alarm')
-    rotate_to_target(0, 180)
     print('finised rotate ....')
 
     print('capture ....')
@@ -46,13 +62,15 @@ def on_message(client, userdata, msg):
     if not cap.isOpened():
         print("Cannot open camera")
         exit(-1)
-    time.sleep(1)
+    time.sleep(5)
     ret, frame = cap.read()    
     cv.imwrite('/home/liran/person_alarm/docker_tf_lite/alarm.jpeg',frame)  
     cap.release()
-    
+    time.sleep(2)
     print('rotate back to default tocation ')
-    rotate_to_target(180, 0)
+    rotate_to_target(0, 180, 0, 115  ) 
+
+
 
 
     print('checking if thre is a person ,,,')
@@ -61,14 +79,564 @@ def on_message(client, userdata, msg):
 
     client.publish("response/topic", response)
 
-    exit(0)
+
+    exit(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Create a client instance
 client = mqtt.Client(callback_api_version=1)
 client.on_message = on_message
 
 # Connect to the broker
-client.connect("192.168.43.110", 1883, 60)
+client.connect("192.168.43.253", 1883, 60)
 
 # Subscribe to a topic
 client.subscribe("request/topic")

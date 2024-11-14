@@ -1,0 +1,9 @@
+-the passowrd of the pi is: 11223344
+-the pi need to be on liran wifi(hot-spot)
+-the ip is 192.168.43.253 (what the esp32 know, you can check the ip with ifconfig command) 
+-to run the pi person alarm program do:
+1. open terminal with ctrl+alt+t
+2.cd person_alarm
+3.python3 src/person_alarm_manager.py
+
+the person img in /home/liran/person_alarm/docker_tf_lite/

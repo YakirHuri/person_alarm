@@ -14,7 +14,7 @@ class ObjectDetection:
 
     def __init__(self):    
         self.num_threads = 4
-        self.score_threshold = 0.5
+        self.score_threshold = 0.3
         self.max_results = 10
 
         path_to_model = "model/efficientdet_lite0.tflite"
