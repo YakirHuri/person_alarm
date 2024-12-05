@@ -51,60 +51,34 @@ def on_message(client, userdata, msg):
 
     msg =   msg.payload.decode()
     if msg  == "left": 
-        rotate_to_target(180, 270, 115,0 ) #left
-        print('rotate to alarm')
-        print('finised rotate ....')
-
-        print('capture ....')
-
-        cap = cv.VideoCapture(0)
-        if not cap.isOpened():
-            print("Cannot open camera")
-            exit(-1)
-        time.sleep(5)
-        ret, frame = cap.read()    
-        cv.imwrite('/home/liran/person_alarm/docker_tf_lite/alarm.jpeg',frame)  
-        cap.release()
-        time.sleep(2)
-        print('rotate back to default tocation ')
-        rotate_to_target(0, 180, 0, 130  ) 
-
-
-        
-
-        print('checking if thre is a person ,,,')
-        response = execute_person_detection()
-        print(f'the response is {response}')
-
-        client.publish("response/topic", response)
+        rotate_to_target(180, 270, 115, 140 ) #left
     elif msg == 'right':
-        rotate_to_target(180, 30, 115,20  ) # right  
-        print('rotate to alarm')
-        print('finised rotate ....')
+        rotate_to_target(180, 0, 115, 140  ) # right  
+    print('rotate to alarm')
+    print('finised rotate ....')
 
-        print('capture ....')
+    print('capture ....')
 
-        cap = cv.VideoCapture(0)
-        if not cap.isOpened():
-            print("Cannot open camera")
-            exit(-1)
-        time.sleep(5)
-        ret, frame = cap.read()    
-        cv.imwrite('/home/liran/person_alarm/docker_tf_lite/alarm.jpeg',frame)  
-        cap.release()
-        time.sleep(2)
-        print('rotate back to default tocation ')
-        rotate_to_target(0, 212, 0, 125  ) 
+    cap = cv.VideoCapture(0)
+    if not cap.isOpened():
+        print("Cannot open camera")
+        exit(-1)
+    time.sleep(5)
+    ret, frame = cap.read()    
+    cv.imwrite('/home/liran/person_alarm/docker_tf_lite/alarm.jpeg',frame)  
+    cap.release()
+    time.sleep(2)
+    print('rotate back to default tocation ')
+    rotate_to_target(0, 180, 0, 115  ) 
 
 
-        
-
-        print('checking if thre is a person ,,,')
-        response = execute_person_detection()
-        print(f'the response is {response}')
-
-        client.publish("response/topic", response)
     
+
+    print('checking if thre is a person ,,,')
+    response = execute_person_detection()
+    print(f'the response is {response}')
+
+    client.publish("response/topic", response)
 
 
     
@@ -120,5 +94,6 @@ client.subscribe("request/topic")
 
 # Start the loop
 client.loop_forever()
+
 
 
